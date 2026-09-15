@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ReviewIQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+<header class="masthead">
+  <div class="wordmark">Review<span>IQ</span></div>
+  <div class="model-state" id="model-state">checking model…</div>
+</header>
+
+<main class="layout">
+  <section class="input-rail">
+    <h1>Read what your reviews are telling you</h1>
+    <p class="lede">Paste Amazon reviews below, one per line, or load a CSV. ReviewIQ scores each one 1–5 stars with a BERT model served on OpenShift AI, then shows you the shape of the feedback.</p>
+
+    <label class="field-label" for="reviews-input">Reviews, one per line</label>
+    <textarea id="reviews-input" spellcheck="false"
+      placeholder="Battery died after two weeks. Very disappointed.&#10;Exceeded expectations, works perfectly."></textarea>
+
+    <div class="input-actions">
+      <button id="analyze-btn" class="primary">Analyze reviews</button>
+      <button id="sample-btn" class="quiet">Try sample reviews</button>
+      <label class="quiet file-btn">Load CSV
+        <input type="file" id="csv-input" accept=".csv,text/csv" hidden>
+      </label>
+    </div>
+    <p class="hint" id="input-hint">Up to 500 reviews per run.</p>
+  </section>
+
+  <section class="results" id="results" hidden>
+    <div class="summary-row">
+      <div class="stat">
+        <div class="stat-value" id="avg-stars">–</div>
+        <div class="stat-name">average stars</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="review-count">–</div>
+        <div class="stat-name">reviews scored</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value" id="negative-share">–</div>
+        <div class="stat-name">negative (1–2 stars)</div>
+      </div>
+    </div>
+
+    <h2>Star distribution</h2>
+    <div class="dist" id="dist"></div>
+
+    <div class="themes">
+      <div>
+        <h2>What negative reviews mention</h2>
+        <ul class="theme-list" id="neg-themes"></ul>
+      </div>
+      <div>
+        <h2>What positive reviews mention</h2>
+        <ul class="theme-list" id="pos-themes"></ul>
+      </div>
+    </div>
+
+    <h2>Scored reviews</h2>
+    <table class="review-table">
+      <thead><tr><th>Stars</th><th>Confidence</th><th>Review</th></tr></thead>
+      <tbody id="review-rows"></tbody>
+    </table>
+  </section>
+
+  <section class="empty" id="empty">
+    <p>Results land here. Paste a few reviews and select <em>Analyze reviews</em> to start.</p>
+  </section>
+</main>
+
+<div class="toast" id="toast" hidden></div>
+<script src="/assets/app.js"></script>
+</body>
+</html>

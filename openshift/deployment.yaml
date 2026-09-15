@@ -1,0 +1,56 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: reviewiq-config
+  namespace: reviewiq
+data:
+  # Internal predictor service (same cluster) — swap for the external route if
+  # the app runs outside the cluster. No trailing slash.
+  INFERENCE_ENDPOINT: "http://reviewiq-sentiment-predictor.reviewiq.svc.cluster.local:8080"
+  MODEL_NAME: "reviewiq-sentiment"
+  VERIFY_TLS: "true"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reviewiq
+  namespace: reviewiq
+  labels:
+    app: reviewiq
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reviewiq
+  template:
+    metadata:
+      labels:
+        app: reviewiq
+    spec:
+      containers:
+        - name: reviewiq
+          image: quay.io/sabhaska/reviewiq:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: reviewiq-config
+          resources:
+            requests:
+              cpu: 250m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
